@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>异步任务进度条展示</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $("#start-task-button").click(function() {
+        $.ajax({
+          type: "POST",
+          url: "/start_task",
+          success: function(data) {
+            checkTaskStatus();
+          },
+          xhrFields: {
+            onprogress: function(e) {
+              if (e.lengthComputable) {
+                var progress = (e.loaded / e.total) * 100;
+                $("#progress-bar").css("width", progress + "%");
+                $("#progress-bar").text(progress.toFixed(2) + "%");
+              }
+            }
+          }
+        });
+      });
+    });
+
+    function checkTaskStatus() {
+      $.ajax({
+        type: "GET",
+        url: "/task_status",
+        success: function(data) {
+          if (data.status === "in_progress") {
+            setTimeout(checkTaskStatus, 1000);
+          } else if (data.status === "completed") {
+            $("#task-result").text("任务完成！");
+          }
+        }
+      });
+    }
+  </script>
+</head>
+<body>
+  <button id="start-task-button">开始任务</button>
+  <div id="progress-bar" style="width: 0%; background-color: lightblue;"></div>
+  <div id="task-result"></div>
+</body>
+</html>

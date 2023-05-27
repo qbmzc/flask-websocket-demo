@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>异步任务进度条展示</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      var socket = io.connect('http://localhost:5000');
+
+      socket.on('connect', function() {
+        console.log('Socket connected');
+      });
+
+      socket.on('progress', function(data) {
+        var progress = data.progress;
+        $("#progress-bar").css("width", progress + "%");
+        $("#progress-bar").text(progress.toFixed(2) + "%");
+      });
+
+      socket.on('task_complete', function() {
+        $("#task-result").text("任务完成！");
+      });
+
+      $("#start-task-button").click(function() {
+        socket.emit('start_task');
+      });
+    });
+  </script>
+</head>
+<body>
+  <button id="start-task-button">开始任务</button>
+  <div id="progress-bar" style="width: 0%; background-color: lightblue;"></div>
+  <div id="task-result"></div>
+</body>
+</html>
