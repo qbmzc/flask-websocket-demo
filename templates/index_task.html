@@ -1,40 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>异步任务进度条展示</title>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script>
-    $(document).ready(function() {
-      $("#start-task-button").click(function() {
-        $.ajax({
-          type: "POST",
-          url: "/start_task",
-          success: function(data) {
-              alert("开始任务")
-            checkTaskStatus();
-          }
+    <title>异步任务进度条展示</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#start-task-button").click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "/start_task",
+                    success: function (data) {
+                        alert("开始任务")
+                        checkTaskStatus();
+                    }
+                });
+            });
         });
-      });
-    });
 
-    function checkTaskStatus() {
-      $.ajax({
-        type: "GET",
-        url: "/task_status",
-        success: function(data) {
-          if (data.status === "in_progress") {
-            setTimeout(checkTaskStatus, 1000);
-          } else if (data.status === "completed") {
-            $("#task-result").text("任务完成！");
-          }
+        function checkTaskStatus() {
+            $.ajax({
+                type: "GET",
+                url: "/task_status",
+                success: function (data) {
+                    if (data.status === "in_progress") {
+                        console.log("任务进行中")
+                        $('#task-result').text('任务进行中-'+new Date());
+                        setTimeout(checkTaskStatus, 1000);
+                    } else if (data.status === "completed") {
+                        alert("任务完成")
+                        $("#task-result").text("任务完成！"+new  Date());
+                    }
+                }
+            });
         }
-      });
-    }
-  </script>
+    </script>
 </head>
 <body>
-  <button id="start-task-button">开始任务</button>
-  <div id="progress-bar" style="width: 0%; background-color: lightblue;"></div>
-  <div id="task-result"></div>
+<button id="start-task-button">开始任务</button>
+<div id="progress-bar" style="width: 0%; background-color: lightblue;"></div>
+<div id="task-result"></div>
 </body>
 </html>
