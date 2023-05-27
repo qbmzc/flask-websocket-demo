@@ -10,7 +10,7 @@ def simulate_long_running_task():
     global task_in_progress
     task_in_progress = True
     for i in range(1, 101):
-        time.sleep(1000)  # 模拟任务执行时间
+        time.sleep(1)  # 模拟任务执行时间
         progress = i
         print("任务进度:", progress)
     print("任务完成！")
@@ -18,7 +18,7 @@ def simulate_long_running_task():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index_task.html')
 
 @app.route('/start_task', methods=['POST'])
 def start_task():
